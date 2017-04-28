@@ -46,7 +46,7 @@ Find your parameters configuration [here](http://vincentgarreau.com/particles.js
 
 #### Shadow
 
-Adds blurred shadow to the lines of the canvas.
+Adds blurred shadow to the lines of the canvas. Also supports json format.
 
 ```js
 import Particles from 'react-particles-js';
@@ -70,6 +70,36 @@ class App extends Component{
     };
 
 }
+```
+
+### Using React.createClass
+
+#### Interactivity
+
+Adds interactivity to onhover event. Note that both js and json format are valid.
+
+```js
+import Particles from 'react-particles-js';
+
+export default React.createClass({
+    particles_param: {
+        "interactivity": {
+            "detect_on": "window",
+            "events": {
+                "onhover": {
+                    "enable": true,
+                    "mode": "repulse"
+                }
+            }
+        }
+    },
+
+    render() {
+        return (
+            <Particles params={this.particles_param}/>
+        );
+    }
+})
 ```
 
 ---
