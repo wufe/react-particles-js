@@ -9,7 +9,7 @@
     "compile:production": "NODE_ENV=production webpack"
   },
   "repository": {
-    "url": "https://github.com/Gitii/react-particles-js",
+    "url": "https://github.com/Wufe/react-particles-js",
     "type": "git"
   },
   "author": "Simone <simone.bembi@gmail.com>",
@@ -29,8 +29,12 @@
     "webpack-node-externals": "^1.5.4"
   },
   "dependencies": {
+    "@types/lodash.clonedeep": "^4.5.3",
     "@types/node": "^8.0.32",
-    "@types/react": "^16.0.8",
+    "@types/react": "^16.0.8"
+  },
+  "peerDependencies": {
+    "lodash.clonedeep": "^4.5.0",
     "react": "^16.0.0"
   }
 }
