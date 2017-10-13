@@ -9,6 +9,7 @@ export interface ParticlesProps{
 	height: string;
 	params: any;
 	style: any;
+	children?: Element[];
 }
 
 export interface ParticlesState{
@@ -73,6 +74,7 @@ export default class Particles extends PureComponent<ParticlesProps, ParticlesSt
 					})
 				}>
 				</canvas>
+				{this.props.children}
 			</div>
 		);
 	}
