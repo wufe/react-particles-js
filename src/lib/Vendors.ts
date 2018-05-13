@@ -1,4 +1,5 @@
-import {IParams, Particle, isInArray, hexToRgb, ParticlesLibrary} from '.';
+import {ParticleObject, isInArray, hexToRgb, ParticlesLibrary} from '.';
+import { IParams } from '../interfaces';
 
 export default class Vendors{
 
@@ -159,7 +160,7 @@ export default class Vendors{
 			}
 
 			let nb_particles: number = area * particles.number.value / particles.number.density.value_area;
-			let missing_particles: number = particles.array.length - nb_particles;
+			let missing_particles: number = this.library.manager.particleObjects.length - nb_particles;
 			if( missing_particles < 0 ){
 				modes.pushParticles( Math.abs( missing_particles ) );
 			}else{
@@ -168,12 +169,11 @@ export default class Vendors{
 		}
 	}
 
-	checkOverlap( p1: Particle, position?: { x: number; y: number; } ): void{
+	checkOverlap( p1: ParticleObject, position?: { x: number; y: number; } ): void{
 		let {canvas, vendors} = this.library;
-		let {particles} = this.params;
 
-		particles.array.forEach( ( particle: Particle ) => {
-			let p2: Particle = particle; 
+		this.library.manager.particleObjects.forEach( ( particle: ParticleObject ) => {
+			let p2: ParticleObject = particle; 
 
 			let dx: number = p1.x - p2.x;
 			let dy: number = p1.y - p2.y;
@@ -187,7 +187,7 @@ export default class Vendors{
 		});
 	}
 
-	createSvgImg( particle: Particle ): void{
+	createSvgImg( particle: ParticleObject ): void{
 		let {tmp} = this.library;
 
 		let svgXml: string = tmp.source_svg;

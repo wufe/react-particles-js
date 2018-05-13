@@ -1,14 +1,13 @@
 import {
-	ICanvasParam,
-	ITmpParam,
-	IParams,
 	deepExtend,
 	getDefaultParams,
 	Interact,
 	Modes,
-	Particle,
+	ParticleObject,
 	ParticleManager,
 	Vendors} from '.';
+import { Particle } from '..';
+import { ICanvasParam, ITmpParam, IParams, IParticleSystem } from '../interfaces';
 
 export default class ParticlesLibrary{
 
@@ -21,6 +20,10 @@ export default class ParticlesLibrary{
 	modes: Modes;
 	vendors: Vendors;
 
+	particleElements: Particle[];
+
+	private system: IParticleSystem;
+
 	constructor( params?: any ){
 		this.tmp = {};
 		this.loadParameters( params );
@@ -30,6 +33,21 @@ export default class ParticlesLibrary{
 		this.vendors = new Vendors( this.params, this );
 		this.manager = new ParticleManager( this.params, this.interact, this.modes, this.vendors, this );
 	}
+
+	setSystem(system: IParticleSystem): void {
+		this.system = system;
+		this.particleElements = system.getParticles();
+		this.manager.setParticleElements(this.particleElements);
+	}
+
+	getSystem(): IParticleSystem {
+		return this.system;
+	}
+
+	// setParticleElements(particleElements: Particle[]): void {
+	// 	this.particleElements = particleElements;
+	// 	this.manager.setParticleElements(particleElements);
+	// }
 
 	loadParameters( params?: any ): void{
 		let defaultParams: IParams = getDefaultParams();
@@ -117,7 +135,6 @@ export default class ParticlesLibrary{
 	canvasInit(): void{
 
 		let {canvas} = this;
-
 		canvas.ctx = canvas.element.getContext( '2d' );
 	}
 
@@ -129,7 +146,7 @@ export default class ParticlesLibrary{
 		canvas.element.height = canvas.height;
 
 		if( this.params && this.params.interactivity.events.resize ){
-			window.addEventListener( 'resize', this.onWindowResize );
+			// window.addEventListener( 'resize', this.onWindowResize );
 		}
 	}
 
@@ -151,13 +168,8 @@ export default class ParticlesLibrary{
 
 		let {canvas, manager, tmp, vendors} = this;
 
-		canvas.width = canvas.element.offsetWidth;
-		canvas.height = canvas.element.offsetHeight;
-
-		if( tmp.retina ){
-			canvas.width *= canvas.pxratio;
-			canvas.height *= canvas.pxratio;
-		}
+		canvas.width = canvas.element.offsetWidth * window.devicePixelRatio;
+		canvas.height = canvas.element.offsetHeight * window.devicePixelRatio;
 
 		canvas.element.width = canvas.width;
 		canvas.element.height = canvas.height;

@@ -1,3 +1,33 @@
+export type TShapeType =
+    'circle' |
+    'edge' |
+    'triangle' |
+    'polygon' |
+    'star' |
+    'image';
+
+export type TOutMode =
+    'bounce' |
+	'out' |
+	'remove';
+
+export type TMoveDirection =
+    'top' |
+    'top-right' |
+    'right' |
+    'bottom-right' |
+    'bottom' |
+    'bottom-left' |
+    'left' |
+    'top-left' |
+	'none';
+	
+export type TOutModeRemoveBorder =
+	'top' |
+	'right' |
+	'bottom' |
+	'left';
+
 export interface ICanvasParam{
 	element: HTMLCanvasElement;
 	width: number;
@@ -55,7 +85,7 @@ export interface IParams{
 			value: any;
 		};
 		shape: {
-			type: string | string[];
+			type: TShapeType;
 			stroke: {
 				width: number;
 				color: any;
@@ -105,10 +135,10 @@ export interface IParams{
 		move: {
 			enable: boolean;
 			speed: number;
-			direction: string;
+			direction: TMoveDirection;
 			random: boolean;
 			straight: boolean;
-			out_mode: string;
+			out_mode: TOutMode;
 			bounce: boolean;
 			attract: {
 				enable: boolean;
@@ -116,7 +146,6 @@ export interface IParams{
 				rotateY: number;
 			}
 		};
-		array: any[];
 	};
 	interactivity: {
 		el?: EventTarget;

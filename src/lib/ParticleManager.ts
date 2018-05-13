@@ -1,4 +1,6 @@
-import {IParams, Particle, Interact, isInArray, Modes,  ParticlesLibrary, Vendors} from '.';
+import {ParticleObject, Interact, isInArray, Modes,  ParticlesLibrary, Vendors} from '.';
+import { Particle } from '../components/Particle';
+import { IParams, TOutModeRemoveBorder } from '../interfaces';
 
 export default class ParticleManager{
 
@@ -8,6 +10,10 @@ export default class ParticleManager{
 	modes: Modes;
 	vendors: Vendors;
 
+	particleObjects: ParticleObject[] = [];
+
+	particleElements: Particle[] = [];
+
 	constructor( params: IParams, interact: Interact, modes: Modes, vendors: Vendors, library: ParticlesLibrary ){
 		this.params = params;
 		this.interact = interact;
@@ -16,47 +22,70 @@ export default class ParticleManager{
 		this.library = library;
 	}
 
+	setParticleElements(particleElements: Particle[]): void {
+		this.particleElements = particleElements;
+		this.particlesCreate();
+	}
 
 	particlesCreate(): void{
 		let {color, opacity} = this.params.particles;
-		for( let i = 0; i < this.params.particles.number.value; i++ ){
-			this.params.particles.array.push( new Particle( this.params, this.library, color, opacity.value ) );
+		const newParticles: ParticleObject[] = [];
+		const particleElementsId = this.particleElements.map(p => p.props.id);
+		this.particleObjects = this.particleObjects.filter(p => particleElementsId.indexOf(p.element.props.id)>-1);
+		this.particleElements.forEach(e => {
+			const foundParticle = this.particleObjects
+				.find(p => p.element.props.id === e.props.id);
+			if (!foundParticle) {
+				return newParticles.push(new ParticleObject(this.params, this.library, e));
+			} else {
+				foundParticle.element = e;
+			}
+			foundParticle.element = e;
+		});
+		if (newParticles.length) {
+			this.particleObjects = [
+				...this.particleObjects,
+				...newParticles
+			];
 		}
 	}
 
 	particlesUpdate(): void{
 		let {canvas, interact, modes} = this.library;
 
-		this.params.particles.array.forEach( ( particle: Particle, i: number ) => {
-			if( this.params.particles.move.enable ){
-				let ms = this.params.particles.move.speed / 2;
-				particle.x += particle.vx * ms;
-				particle.y += particle.vy * ms;
+		this.particleObjects.forEach( ( particle: ParticleObject, i: number ) => {
+			const {moveEnabled, moveSpeed} = particle.element.props;
+			if( moveEnabled ){
+				let ms = moveSpeed / 2;
+				particle.x += particle.xVelox * ms;
+				particle.y += particle.yVelox * ms;
 			}
 
-			if( this.params.particles.opacity.anim.enable ){
+			const {opacityAnimationEnabled, opacityValue, opacityAnimationMinimum} = particle.element.props;
+			if( opacityAnimationEnabled ){
 				if( particle.opacity_status == true ){
-					if( particle.opacity >= this.params.particles.opacity.value )
+					if( particle.opacity >= opacityValue )
 						particle.opacity_status = false;
-					particle.opacity += particle.vo;
+					particle.opacity += particle.opacityVelox;
 				}else{
-					if( particle.opacity <= this.params.particles.opacity.anim.opacity_min )
+					if( particle.opacity <= opacityAnimationMinimum )
 						particle.opacity_status = true;
-					particle.opacity -= particle.vo;
+					particle.opacity -= particle.opacityVelox;
 				}
 				if( particle.opacity < 0 )
 					particle.opacity = 0;
 			}
 
-			if( this.params.particles.size.anim.enable ){
+			const {sizeAnimationEnabled, sizeValue, sizeAnimationMinimum} = particle.element.props;
+			if( sizeAnimationEnabled ){
 				if( particle.size_status == true ){
-					if( particle.radius >= this.params.particles.size.value )
+					if( particle.radius >= sizeValue )
 						particle.size_status = false;
-					particle.radius += particle.vs;
+					particle.radius += particle.sizeVelox;
 				}else{
-					if( particle.radius <= this.params.particles.size.anim.size_min )
+					if( particle.radius <= sizeAnimationMinimum )
 						particle.size_status = true;
-					particle.radius -= particle.vs;
+					particle.radius -= particle.sizeVelox;
 				}
 				if( particle.radius < 0 )
 					particle.radius = 0;
@@ -70,14 +99,15 @@ export default class ParticleManager{
 			};
 			let new_pos: Pos;
 
-			if( this.params.particles.move.out_mode == 'bounce' ){
+			const {moveOutMode, moveOutModeRemoveBorders, moveOutModeRemoveFallback} = particle.element.props;
+			if(moveOutMode === 'bounce' || moveOutModeRemoveFallback === 'bounce'){
 				new_pos = {
 					x_left: particle.radius,
 					x_right: canvas.width,
 					y_top: particle.radius,
 					y_bottom: canvas.height
 				};
-			}else{
+			} else {
 				new_pos = {
 					x_left: -particle.radius,
 					x_right: canvas.width + particle.radius,
@@ -86,33 +116,93 @@ export default class ParticleManager{
 				};
 			}
 
+			let offscreenBorder: TOutModeRemoveBorder;
+			let isOffscreen = false;
+
 			if( particle.x - particle.radius > canvas.width ){
-				particle.x = new_pos.x_left;
-				particle.y = Math.random() * canvas.height;
+				isOffscreen = true;
+				offscreenBorder = 'right';
 			}else if( particle.x + particle.radius < 0 ){
-				particle.x = new_pos.x_right;
-				particle.y = Math.random() * canvas.height;
+				isOffscreen = true;
+				offscreenBorder = 'left';
 			}
 
 			if( particle.y - particle.radius > canvas.height ){
-				particle.y = new_pos.y_top;
-				particle.x = Math.random() * canvas.width;
+				isOffscreen = true;
+				offscreenBorder = 'bottom';
 			}else if( particle.y + particle.radius < 0 ){
-				particle.y = new_pos.y_bottom;
-				particle.x = Math.random() * canvas.width;
+				isOffscreen = true;
+				offscreenBorder = 'top';
 			}
 
-			switch( this.params.particles.move.out_mode ){
-				case 'bounce':
-					if( particle.x + particle.radius > canvas.width )
-						particle.vx = -particle.vx;
-					else if( particle.x - particle.radius < 0 )
-						particle.vx = -particle.vx;
-					if( particle.y + particle.radius > canvas.height )
-						particle.vy = -particle.vy;
-					else if( particle.y - particle.radius < 0 )
-						particle.vy = -particle.vy;
-					break;
+			if (isOffscreen) {
+				if (moveOutMode === 'remove' && moveOutModeRemoveBorders.indexOf(offscreenBorder) > -1) {
+					const particleSystem = this.library.getSystem();
+					if (particleSystem) {
+						particleSystem.onRemoveRequest(particle.element);
+						return;
+					}
+				} else {
+					switch (offscreenBorder) {
+						case 'right':
+							particle.x = new_pos.x_left;
+							particle.y = Math.random() * canvas.height;
+							break;
+						case 'left':
+							particle.x = new_pos.x_right;
+							particle.y = Math.random() * canvas.height;
+							break;
+						case 'bottom':
+							particle.y = new_pos.y_top;
+							particle.x = Math.random() * canvas.width;
+							break;
+						case 'top':
+							particle.y = new_pos.y_bottom;
+							particle.x = Math.random() * canvas.width;
+							break;
+					}
+				}
+				
+			}
+
+			// Bounce collision check
+			let collisionBorder: TOutModeRemoveBorder;
+			let hasCollided = false;
+			if( particle.x + particle.radius > canvas.width ) {
+				hasCollided = true;
+				collisionBorder = 'right';
+			} else if( particle.x - particle.radius < 0 ) {
+				hasCollided = true;
+				collisionBorder = 'left';
+			}
+
+			if( particle.y + particle.radius > canvas.height ) {
+				hasCollided = true;
+				collisionBorder = 'bottom';
+			} else if( particle.y - particle.radius < 0 ) {
+				hasCollided = true;
+				collisionBorder = 'top';
+			}
+
+			if(moveOutMode === 'bounce' ||
+				(moveOutMode === 'remove' &&
+					hasCollided &&
+					moveOutModeRemoveBorders.indexOf(collisionBorder) === -1 &&
+					moveOutModeRemoveFallback === 'bounce')){
+				switch (collisionBorder) {
+					case 'right':
+						particle.xVelox = -particle.xVelox;
+						break;
+					case 'left':
+						particle.xVelox = -particle.xVelox;
+						break;
+					case 'bottom':
+						particle.yVelox = -particle.yVelox;
+						break;
+					case 'top':
+						particle.yVelox = -particle.yVelox;
+						break;
+				}
 			}
 
 			if( isInArray( 'grab', this.params.interactivity.events.onhover.mode ) ){
@@ -129,22 +219,21 @@ export default class ParticleManager{
 				modes.repulseParticle( particle );
 			}
 
-			//let {linkParticles, attractParticles, bounceParticles} = this.interact;
+			const {lineLinkedEnabled, moveAttractEnabled, moveBounce} = particle.element.props;
+			// if( lineLinkedEnabled || moveAttractEnabled ){
+				for( let j = i + 1; j < this.particleObjects.length; j++ ){
+					let link = this.particleObjects[ j ];
 
-			if( this.params.particles.line_linked.enable || this.params.particles.move.attract.enable ){
-				for( let j = i + 1; j < this.params.particles.array.length; j++ ){
-					let link = this.params.particles.array[ j ];
-
-					if( this.params.particles.line_linked.enable )
+					if( lineLinkedEnabled && link.element.props.lineLinkedEnabled )
 						interact.linkParticles( particle, link );
 
-					if( this.params.particles.move.attract.enable )
+					if( moveAttractEnabled || link.element.props.moveAttractEnabled )
 						interact.attractParticles( particle, link );
 
-					if( this.params.particles.move.bounce )
+					if( moveBounce )
 						interact.bounceParticles( particle, link );
 				}
-			}
+			// }
 		});
 	}
 
@@ -155,13 +244,13 @@ export default class ParticleManager{
 		canvas.ctx.clearRect( 0, 0, canvas.width, canvas.height );
 		manager.particlesUpdate();
 
-		this.params.particles.array.forEach( ( particle: Particle ) => {
+		this.particleObjects.forEach( ( particle: ParticleObject ) => {
 			particle.draw();
 		});
 	}
 
 	particlesEmpty(): void{
-		this.params.particles.array = [];
+		this.particleObjects = [];
 	}
 
 	particlesRefresh(): void{

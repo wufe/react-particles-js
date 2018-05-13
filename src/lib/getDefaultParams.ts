@@ -11,7 +11,7 @@ export const getDefaultParams: () => IParams =
 				}
 			},
 			color: {
-				value: '#FFF'
+				value: '#FFFFFF'
 			},
 			shape: {
 				type: 'circle',
@@ -51,7 +51,7 @@ export const getDefaultParams: () => IParams =
 			line_linked: {
 				enable: true,
 				distance: 150,
-				color: '#FFF',
+				color: '#FFFFFF',
 				opacity: 0.6,
 				width: 1,
 				shadow: {

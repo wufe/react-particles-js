@@ -1,4 +1,6 @@
-import {clamp, isInArray, IMouseParam, IParams, Particle, ParticlesLibrary} from '.';
+import {clamp, isInArray, ParticleObject, ParticlesLibrary} from '.';
+import { Particle } from '..';
+import { IParams, IMouseParam } from '../interfaces';
 
 type Pos = {
 	pos_x: number;
@@ -21,24 +23,31 @@ export default class Modes{
 		tmp.pushing = true;
 
 		for( let i = 0; i < nb; i++ ){
-			this.params.particles.array.push(
-				new Particle(
-					this.params,
-					this.library,
-					this.params.particles.color,
-					this.params.particles.opacity.value,
-					{
-						x: pos ? pos.pos_x : Math.random() * canvas.width,
-						y: pos ? pos.pos_y : Math.random() * canvas.height
-					})
-			);
 
-			if( i == nb -1 ){
-				if( !this.params.particles.move.enable ){
-					manager.particlesDraw();
-				}
-				tmp.pushing = false;
-			}
+			const {children, ...firstParticleProps} = this.library.manager.particleObjects[0].element.props;
+
+			this.library.manager.particleObjects.push(new ParticleObject(this.params, this.library, new Particle({
+				...firstParticleProps
+			})));
+			// TODO: How is this supposed to behave?
+			// this.params.particles.array.push(
+			// 	new Particle(
+			// 		this.params,
+			// 		this.library,
+			// 		this.params.particles.color,
+			// 		this.params.particles.opacity.value,
+			// 		{
+			// 			x: pos ? pos.pos_x : Math.random() * canvas.width,
+			// 			y: pos ? pos.pos_y : Math.random() * canvas.height
+			// 		})
+			// );
+
+			// if( i == nb -1 ){
+			// 	if( !this.params.particles.move.enable ){
+			// 		manager.particlesDraw();
+			// 	}
+			// 	tmp.pushing = false;
+			// }
 		}
 	}
 
@@ -46,13 +55,13 @@ export default class Modes{
 
 		let {manager} = this.library;
 
-		this.params.particles.array.splice( 0, nb );
+		this.library.manager.particleObjects.splice( 0, nb );
 		if( !this.params.particles.move.enable ){
 			manager.particlesDraw();
 		}
 	}
 
-	bubbleParticle( particle: Particle ){
+	bubbleParticle( particle: ParticleObject ){
 
 		let {tmp} = this.library;
 
@@ -177,7 +186,7 @@ export default class Modes{
 		}
 	}
 
-	repulseParticle( particle: Particle ){
+	repulseParticle( particle: ParticleObject ){
 
 		let {canvas, tmp} = this.library;
 
@@ -217,7 +226,7 @@ export default class Modes{
 
 			if( !tmp.repulse_finish ){
 				tmp.repulse_count++;
-				if( tmp.repulse_count == this.params.particles.array.length )
+				if( tmp.repulse_count == this.library.manager.particleObjects.length )
 					tmp.repulse_finish = true;
 			}
 
@@ -234,24 +243,24 @@ export default class Modes{
 				let process: () => void =
 					() => {
 						let f: number = Math.atan2( dy, dx );
-						particle.vx = force * Math.cos( f );
-						particle.vy = force * Math.sin( f );
+						particle.xVelox = force * Math.cos( f );
+						particle.yVelox = force * Math.sin( f );
 						if( this.params.particles.move.out_mode == 'bounce' ){
 							let pos: {
 								x: number;
 								y: number;
 							} = {
-								x: particle.x + particle.vx,
-								y: particle.y + particle.vy
+								x: particle.x + particle.xVelox,
+								y: particle.y + particle.yVelox
 							}
 							if ( pos.x + particle.radius > canvas.width )
-								particle.vx = -particle.vx;
+								particle.xVelox = -particle.xVelox;
 							else if ( pos.x - particle.radius < 0 )
-								particle.vx = -particle.vx;
+								particle.xVelox = -particle.xVelox;
 							if ( pos.y + particle.radius > canvas.height )
-								particle.vy = -particle.vy;
+								particle.yVelox = -particle.yVelox;
 							else if ( pos.y - particle.radius < 0 )
-								particle.vy = -particle.vy;
+								particle.yVelox = -particle.yVelox;
 						}
 					};
 
@@ -260,15 +269,15 @@ export default class Modes{
 				}
 			}else{
 				if( tmp.repulse_clicking == false ){
-					particle.vx = particle.vx_i;
-					particle.vy = particle.vy_i;
+					particle.xVelox = particle.vx_i;
+					particle.yVelox = particle.vy_i;
 				}
 			}
 
 		}
 	}
 
-	grabParticle( particle: Particle ): void{
+	grabParticle( particle: ParticleObject ): void{
 
 		let {canvas} = this.library;
 

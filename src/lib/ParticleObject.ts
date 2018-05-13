@@ -1,52 +1,59 @@
-import {hexToRgb, IParams, ParticlesLibrary, getColor} from '.';
+import {hexToRgb, ParticlesLibrary, getColor, TColor} from '.';
+import { Particle } from '..';
+import { TShapeType, IParams } from '../interfaces';
 
-export default class Particle{
-
-	params: IParams;
-	library: ParticlesLibrary;
+export default class ParticleObject {
 
 	radius: number;
 	radius_bubble: number;
 	size_status: boolean;
-	vs: number;
+	sizeVelox: number;
 
 	x: number;
 	y: number;
 
-	color: any;
+	color: TColor;
 
 	opacity: number;
 	opacity_bubble: number;
 	opacity_status: boolean;
-	vo: number;
+	opacityVelox: number;
 
-	vx: number;
-	vy: number;
+	xVelox: number;
+	yVelox: number;
 
 	vx_i: number;
 	vy_i: number;
 
-	shape: string;
+	shape: TShapeType;
 
 	img: { src: string; ratio: number; loaded?: boolean; obj?: any; };
 
-	constructor( params: IParams, library: ParticlesLibrary, color?: any, opacity?: any, position?: { x: number; y: number; }){
-		this.params = params;
-		this.library = library;
+	constructor(
+		private params: IParams,
+		private library: ParticlesLibrary,
+		public element: Particle
+		// color?: any,
+		// opacity?: any,
+		// position?: { x: number; y: number; }
+	){
+		const {initialX: x, initialY: y, color} = element.props;
+		const position = x && y ? {x, y} : undefined;
 		this.setupSize();
-		this.setupPosition( position );
-		this.setupColor( color );
+		this.setupPosition(position);
+		this.setupColor(color);
 		this.setupOpacity();
 		this.setupAnimation();
 	}
 
 	setupSize(): void{
-		this.radius = ( this.params.particles.size.random ? Math.random() : 1 ) * this.params.particles.size.value;
-		if( this.params.particles.size.anim.enable ){
+		const {sizeRandomness, sizeValue, sizeAnimationEnabled, sizeAnimationSpeed, sizeAnimationSync} = this.element.props;
+		this.radius = ( sizeRandomness ? Math.random() : 1 ) * sizeValue;
+		if( sizeAnimationEnabled ){
 			this.size_status = false;
-			this.vs = this.params.particles.size.anim.speed / 100;
-			if( !this.params.particles.size.anim.sync )
-				this.vs = this.vs * Math.random();
+			this.sizeVelox = sizeAnimationSpeed / 100;
+			if( !sizeAnimationSync )
+				this.sizeVelox = this.sizeVelox * Math.random();
 		}
 	}
 
@@ -56,6 +63,14 @@ export default class Particle{
 
 		this.x = position ? position.x : Math.random() * canvas.width;
 		this.y = position ? position.y : Math.random() * canvas.height;
+		if (!position) {
+			const {initialX, initialY} = this.element.props;
+			this.x = initialX !== undefined ? initialX : Math.random() * canvas.width;
+			this.y = initialY !== undefined ? initialY : Math.random() * canvas.height;
+		} else {
+			this.x = position.x;
+			this.y = position.y;
+		}
 
 		if( this.x > canvas.width - this.radius * 2 ){
 			this.x = this.x - this.radius;
@@ -68,22 +83,23 @@ export default class Particle{
 			this.y = this.y + this.radius;
 		}
 
-		if( this.params.particles.move.bounce ){
+		if( this.element.props.moveBounce ){
 			vendors.checkOverlap( this, position );
 		}
 	}
 
-	setupColor( color?: any ){
-		this.color = getColor( color.value );
+	setupColor(color: string){
+		this.color = getColor(color);
 	}
 
 	setupOpacity(): void{
-		this.opacity = ( this.params.particles.opacity.random ? Math.random() : 1 ) * this.params.particles.opacity.value;
-		if( this.params.particles.opacity.anim.enable ){
+		const {opacityRandomness, opacityValue, opacityAnimationEnabled, opacityAnimationSpeed, opacityAnimationSync} = this.element.props;
+		this.opacity = (opacityRandomness ? Math.random() : 1) * opacityValue;
+		if( opacityAnimationEnabled ){
 			this.opacity_status = false;
-			this.vo = this.params.particles.opacity.anim.speed / 100;
-			if( !this.params.particles.opacity.anim.sync ){
-				this.vo = this.vo * Math.random();
+			this.opacityVelox = opacityAnimationSpeed / 100;
+			if( !opacityAnimationSync ){
+				this.opacityVelox = this.opacityVelox * Math.random();
 			}
 		}
 	}
@@ -91,68 +107,60 @@ export default class Particle{
 	setupAnimation(): void{
 
 		let {tmp, vendors} = this.library;
+		const {moveDirection, moveStraight, moveRandomness, shapeType, imageSrc, imageWidth, imageHeight} = this.element.props;
 
-		let velbase: { x: number; y: number; } = null;
-		switch( this.params.particles.move.direction ){
+		let baseVelox: { x: number; y: number; } = null;
+		switch( moveDirection ){
 			case 'top':
-				velbase = { x: 0, y: -1 };
+				baseVelox = { x: 0, y: -1 };
 				break;
 			case 'top-right':
-				velbase = { x: 0.5, y: -0.5 };
+				baseVelox = { x: 0.5, y: -0.5 };
 				break;
 			case 'right':
-				velbase = { x: 1, y: 0 };
+				baseVelox = { x: 1, y: 0 };
 				break;
 			case 'bottom-right':
-				velbase = { x: 0.5, y: 0.5 };
+				baseVelox = { x: 0.5, y: 0.5 };
 				break;
 			case 'bottom':
-				velbase = { x: 0, y: 1 };
+				baseVelox = { x: 0, y: 1 };
 				break;
 			case 'bottom-left':
-				velbase = { x: -0.5, y: 1 };
+				baseVelox = { x: -0.5, y: 1 };
 				break;
 			case 'left':
-				velbase = { x: -1, y:0 };
+				baseVelox = { x: -1, y:0 };
 				break;
 			case 'top-left':
-				velbase = { x: -0.5, y: -0.5 };
+				baseVelox = { x: -0.5, y: -0.5 };
 				break;
 			default:
-				velbase = { x: 0, y: 0 };
+				baseVelox = { x: 0, y: 0 };
 				break;
 		}
-		if( this.params.particles.move.straight ){
-			this.vx = velbase.x;
-			this.vy = velbase.y;
-			if( this.params.particles.move.random ){
-				this.vx = this.vx * ( Math.random() );
-				this.vy = this.vy * ( Math.random() );
+		if( moveStraight ){
+			this.xVelox = baseVelox.x;
+			this.yVelox = baseVelox.y;
+			if( moveRandomness ){
+				this.xVelox = this.xVelox * ( Math.random() );
+				this.yVelox = this.yVelox * ( Math.random() );
 			}
 		}else{
-			this.vx = velbase.x + Math.random() - 0.5;
-			this.vy = velbase.y + Math.random() - 0.5;
+			this.xVelox = baseVelox.x + Math.random() - 0.5;
+			this.yVelox = baseVelox.y + Math.random() - 0.5;
 		}
 
-		this.vx_i = this.vx;
-		this.vy_i = this.vy;
+		this.vx_i = this.xVelox;
+		this.vy_i = this.yVelox;
 
-		let shape_type: any = this.params.particles.shape.type;
-
-		if( typeof( shape_type ) == 'object' ){
-			if( shape_type instanceof Array ){
-				let shape_selected: string = shape_type[ Math.floor( Math.random() * shape_type.length ) ];
-				this.shape = shape_selected;
-			}
-		}else{
-			this.shape = shape_type;
-		}
+		let shape_type: TShapeType = shapeType;
+		this.shape = shape_type;
 
 		if( this.shape == 'image' ){
-			let sh: any = this.params.particles.shape;
 			this.img = {
-				src: sh.image.src,
-				ratio: sh.image.width / sh.image.height
+				src: imageSrc,
+				ratio: imageWidth / imageHeight
 			};
 			if( !this.img.ratio )
 				this.img.ratio = 1;
@@ -166,9 +174,7 @@ export default class Particle{
 	}
 
 	public draw(): void{
-
 		let {canvas, tmp, vendors} = this.library;
-		let {particles} = this.params;
 
 		let radius: number;
 		if( this.radius_bubble != undefined ){
@@ -255,9 +261,11 @@ export default class Particle{
 
 		canvas.ctx.closePath();
 
-		if( this.params.particles.shape.stroke.width > 0 ){
-			canvas.ctx.strokeStyle = this.params.particles.shape.stroke.color;
-			canvas.ctx.lineWidth = this.params.particles.shape.stroke.width;
+		const {strokeWidth, strokeColor} = this.element.props;
+
+		if( strokeWidth > 0 ){
+			canvas.ctx.strokeStyle = strokeColor;
+			canvas.ctx.lineWidth = strokeWidth;
 			canvas.ctx.stroke();
 		}
 

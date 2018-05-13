@@ -1,3 +1,5 @@
+export type TColor = { rgb?: RGB, hsl?: HSL };
+
 type RGB = {
 	r: number;
 	g: number;
@@ -49,9 +51,9 @@ export const deepExtend: ( destination: any, source: any ) => any =
 		return destination;
 	};
 
-export const getColor: ( colorObject: any ) => { rgb?: RGB, hsl?: HSL } = 
+export const getColor: ( colorObject: any ) => TColor = 
 	( colorObject ) => {
-		let color: { rgb?: RGB, hsl?: HSL } = {};
+		let color: TColor = {};
 		if( typeof( colorObject ) == 'object' ){
 			if( colorObject instanceof Array ){
 				let selectedColor: string = colorObject[ Math.floor( Math.random() * colorObject.length ) ];
