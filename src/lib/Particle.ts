@@ -29,6 +29,7 @@ export default class Particle{
 	shape: string;
 
 	img: { src: string; ratio: number; loaded?: boolean; obj?: any; };
+	imgs: [{ src: string; ratio: number; loaded?: boolean; obj?: any; }];
 
 	constructor( params: IParams, library: ParticlesLibrary, color?: any, opacity?: any, position?: { x: number; y: number; }){
 		this.params = params;
@@ -157,10 +158,30 @@ export default class Particle{
 			if( !this.img.ratio )
 				this.img.ratio = 1;
 			if( tmp.img_type == 'svg' && tmp.source_svg != undefined ){
-				vendors.createSvgImg( this );
+				vendors.createSvgImg( this, tmp.source_svg );
 				if( tmp.pushing ){
 					this.img.loaded = false;
 				}
+			}
+		}
+		if( this.shape == 'images' ){
+			let sh: any = this.params.particles.shape;
+			tmp.image_index++;
+			let image = sh.images[tmp.image_index % sh.images.length];
+			this.img = {
+				src: image.src,
+				ratio: image.width / image.height
+			};
+			if( !this.img.ratio )
+				this.img.ratio = 1;
+			let source_svg = tmp.sources_svg[tmp.image_index % sh.images.length]
+			if( tmp.img_type == 'svg' && source_svg ){
+			// if( tmp.img_type == 'svg' && image.src ){
+				vendors.createSvgImg( this, source_svg);
+				// vendors.createSvgImg( this, source_svg.src);
+				// if( tmp.pushing ){
+				// 	this.img.loaded = false;
+				// }
 			}
 		}
 	}
@@ -231,6 +252,7 @@ export default class Particle{
 				);
 				break;
 
+			case 'images':
 			case 'image':
 				let draw: ( img_obj: any ) => void = 
 					( img_obj ) => {
