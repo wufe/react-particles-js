@@ -187,10 +187,8 @@ export default class Vendors{
 		});
 	}
 
-	createSvgImg( particle: Particle ): void{
+	createSvgImg( particle: Particle, svgXml: string ): void{
 		let {tmp} = this.library;
-
-		let svgXml: string = tmp.source_svg;
 		let rgbHex: RegExp = /#([0-9A-F]{3,6})|rgb\([0-9,]+\)/gi;
 		let coloredSvgXml: string = svgXml.replace( rgbHex, ( m, r, g, b ) => {
 			let color_value: string;
@@ -249,34 +247,42 @@ export default class Vendors{
 		window.open( canvas.element.toDataURL( 'image/png' ), '_blank' );
 	}
 
-	loadImg( type: string ): void{
+	loadImg( type: string, image: any ): void{
 		let {tmp, vendors} = this.library;
 		let {particles} = this.params;
 
 		tmp.img_error = undefined;
-		if( particles.shape.image.src != '' ){
+		if( image.src != '' ){
 			if( type == 'svg' ){
-				let xhr: XMLHttpRequest = new XMLHttpRequest();
-				xhr.open( 'GET', particles.shape.image.src );
-				xhr.onreadystatechange = ( data: any ) => {
-					if( xhr.readyState == 4 ){
-						if( xhr.status == 200 ){
-							tmp.source_svg = data.currentTarget.response;
-							vendors.checkBeforeDraw();
-						}else{
-							console.log( 'Error react-particles-js - image not found' );
-							tmp.img_error = true;
+				if(image.load){
+					let xhr: XMLHttpRequest = new XMLHttpRequest();
+					xhr.open( 'GET', image.src );
+					xhr.onreadystatechange = ( data: any ) => {
+						if( xhr.readyState == 4 ){
+							if( xhr.status == 200 ){
+								// image.src = data.currentTarget.response;
+								tmp.source_svg = data.currentTarget.response;
+								tmp.sources_svg.push(data.currentTarget.response);
+								vendors.checkBeforeDraw();
+							}else{
+								console.log( 'Error react-particles-js - image not found' );
+								tmp.img_error = true;
+							}
 						}
-					}
-				};
-				xhr.send();
+					};
+					xhr.send();
+				}else{
+					tmp.source_svg = image.src;
+					tmp.sources_svg.push(image.src);
+					vendors.checkBeforeDraw();
+				}
 			}else{
 				let img: HTMLImageElement = new Image();
 				img.addEventListener( 'load', () => {
 					tmp.img_obj = img;
 					vendors.checkBeforeDraw();
 				});
-				img.src = particles.shape.image.src;
+				img.src = image.src;
 			}
 		}else{
 			console.log( 'Error react-particles-js - no image.src' );
@@ -330,12 +336,17 @@ export default class Vendors{
 	checkBeforeDraw(): void{
 		let {tmp, vendors} = this.library;
 		let {particles} = this.params;
-
-		if( particles.shape.type == 'image' ){
-			if( tmp.img_type == 'svg' && tmp.source_svg == undefined ){
+		if( isInArray('image', particles.shape.type) || isInArray('images', particles.shape.type) ){
+			if( tmp.img_type == 'svg' && ( tmp.source_svg == undefined || tmp.sources_svg === 0 ) ){
 				// Not clear what "= requestAnimationFrame( check )" means
-				let check: any;
-				tmp.checkAnimFrame = requestAnimationFrame( check );
+				// https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
+				// The window.requestAnimationFrame() method tells the browser that you wish to
+				// perform an animation and requests that the browser call a specified function to
+				// update an animation before the next repaint. The method takes a callback as an 
+				// argument to be invoked before the repaint.
+				// let check: any;
+				// console.log('requestAnimationFrame', requestAnimationFrame)
+				// tmp.checkAnimFrame = requestAnimationFrame( check );
 			}else{
 				cancelAnimationFrame( tmp.checkAnimFrame );
 				if( !tmp.img_error ){
@@ -364,9 +375,34 @@ export default class Vendors{
 	start(): void{
 		let {tmp, vendors} = this.library;
 		let {particles} = this.params;
+		if( !Array.isArray(particles.shape.type) ){
+			particles.shape.type = [particles.shape.type]
+		}
 		if( isInArray( 'image', particles.shape.type ) ){
-			tmp.img_type = particles.shape.image.src.substr( particles.shape.image.src.length - 3 );
-			vendors.loadImg( tmp.img_type );
+			let image = particles.shape.image;
+			let match: string[];
+			if(match = /^data:image\/(\w{3})\+xml;base64,(.*)$/.exec(image.src)){
+				tmp.img_type = match[1];
+				image.src = atob(match[2]);
+				image.load = false;
+			}else if(match = /^.*(\w{3})$/.exec(image.src)){
+				tmp.img_type = match[1];
+				image.load = true;
+			}
+			vendors.loadImg( tmp.img_type, image );
+		}else if( isInArray( 'images', particles.shape.type ) ){
+			for( let image of particles.shape.images ){
+				let match: string[];
+				if(match = /^data:image\/(\w{3})\+xml;base64,(.*)$/.exec(image.src)){
+					tmp.img_type = match[1];
+					image.src = atob(match[2]);
+					image.load = false;
+				}else if(match = /^.*(\w{3})$/.exec(image.src)){
+					tmp.img_type = match[1];
+					image.load = true;
+				}
+				vendors.loadImg( tmp.img_type, image );
+			}
 		}else{
 			vendors.checkBeforeDraw();
 		}
