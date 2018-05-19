@@ -190,7 +190,7 @@ export default class Vendors{
 	createSvgImg( particle: Particle ): void{
 		let {tmp} = this.library;
 
-		let svgXml: string = tmp.source_svg;
+		let svgXml: string = this.params.particles.shape.image.data;
 		let rgbHex: RegExp = /#([0-9A-F]{3,6})|rgb\([0-9,]+\)/gi;
 		let coloredSvgXml: string = svgXml.replace( rgbHex, ( m, r, g, b ) => {
 			let color_value: string;
@@ -249,34 +249,39 @@ export default class Vendors{
 		window.open( canvas.element.toDataURL( 'image/png' ), '_blank' );
 	}
 
-	loadImg( type: string ): void{
+	loadImg( type: string, image: any ): void{
 		let {tmp, vendors} = this.library;
-		let {particles} = this.params;
 
 		tmp.img_error = undefined;
-		if( particles.shape.image.src != '' ){
+		if( image.src != '' ){
 			if( type == 'svg' ){
-				let xhr: XMLHttpRequest = new XMLHttpRequest();
-				xhr.open( 'GET', particles.shape.image.src );
-				xhr.onreadystatechange = ( data: any ) => {
-					if( xhr.readyState == 4 ){
-						if( xhr.status == 200 ){
-							tmp.source_svg = data.currentTarget.response;
-							vendors.checkBeforeDraw();
-						}else{
-							console.log( 'Error react-particles-js - image not found' );
-							tmp.img_error = true;
+				if(image.data){
+					// tmp.source_svg = image.data;
+					vendors.checkBeforeDraw();
+				}else{
+					let xhr: XMLHttpRequest = new XMLHttpRequest();
+					xhr.open( 'GET', image.src );
+					xhr.onreadystatechange = ( data: any ) => {
+						if( xhr.readyState == 4 ){
+							if( xhr.status == 200 ){
+								image.data = data.currentTarget.response;
+								// tmp.source_svg = data.currentTarget.response;
+								vendors.checkBeforeDraw();
+							}else{
+								console.log( 'Error react-particles-js - image not found' );
+								tmp.img_error = true;
+							}
 						}
-					}
-				};
-				xhr.send();
+					};
+					xhr.send();
+				}
 			}else{
 				let img: HTMLImageElement = new Image();
 				img.addEventListener( 'load', () => {
 					tmp.img_obj = img;
 					vendors.checkBeforeDraw();
 				});
-				img.src = particles.shape.image.src;
+				img.src = image.src;
 			}
 		}else{
 			console.log( 'Error react-particles-js - no image.src' );
@@ -332,7 +337,7 @@ export default class Vendors{
 		let {particles} = this.params;
 
 		if( particles.shape.type == 'image' ){
-			if( tmp.img_type == 'svg' && tmp.source_svg == undefined ){
+			if( tmp.img_type == 'svg' && this.params.particles.shape.image.data == undefined ){
 				// Not clear what "= requestAnimationFrame( check )" means
 				let check: any;
 				tmp.checkAnimFrame = requestAnimationFrame( check );
@@ -365,8 +370,15 @@ export default class Vendors{
 		let {tmp, vendors} = this.library;
 		let {particles} = this.params;
 		if( isInArray( 'image', particles.shape.type ) ){
-			tmp.img_type = particles.shape.image.src.substr( particles.shape.image.src.length - 3 );
-			vendors.loadImg( tmp.img_type );
+			
+			let match: string[];
+			if(match = /^data:image\/(\w{3})\+xml;base64,(.*)$/.exec(particles.shape.image.src)){
+				tmp.img_type = match[1];
+				particles.shape.image.data = atob(match[2]);
+			}else if(match = /^.*(\w{3})$/.exec(particles.shape.image.src)){
+				tmp.img_type = match[1];
+			}
+			vendors.loadImg(tmp.img_type, particles.shape.image);
 		}else{
 			vendors.checkBeforeDraw();
 		}
