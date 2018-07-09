@@ -10,7 +10,9 @@ export default class Vendors{
 
 		this.params = params;
 		this.library = library;
-    this.lastDraw = performance.now();
+    if( typeof performance !== 'undefined' ){
+      this.lastDraw = performance.now();
+    }
 		
 		this.onMouseMove = this.onMouseMove.bind( this );
 		this.onMouseLeave = this.onMouseLeave.bind( this );
@@ -290,13 +292,16 @@ export default class Vendors{
 	}
 
 	draw(): void{
-    let shouldDraw = false;
+    let shouldDraw = true;
 		let {tmp, manager, vendors} = this.library;
 		let {particles} = this.params;
-    let thisDraw = performance.now();
-    if( thisDraw - this.lastDraw > 1000 / particles.fps_limit ){
-      shouldDraw = true;
-      this.lastDraw = performance.now();
+    if( typeof performance !== 'undefined' ){
+      let thisDraw = performance.now();
+      if( thisDraw - this.lastDraw < 1000 / particles.fps_limit ){
+        shouldDraw = false;
+      } else {
+        this.lastDraw = performance.now();
+      }
     }
 		if( particles.shape.type == 'image' || particles.shape.type == 'images' ){
 			if( tmp.img_type == 'svg' ){
