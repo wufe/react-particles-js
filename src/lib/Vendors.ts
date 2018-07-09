@@ -4,15 +4,18 @@ export default class Vendors{
 
 	params: IParams;
 	library: ParticlesLibrary;
+  lastDraw: number;
 
 	constructor( params: IParams, library: ParticlesLibrary ){
 
 		this.params = params;
 		this.library = library;
+    this.lastDraw = performance.now();
 		
 		this.onMouseMove = this.onMouseMove.bind( this );
 		this.onMouseLeave = this.onMouseLeave.bind( this );
 		this.onClick = this.onClick.bind( this );
+		this.draw = this.draw.bind( this );
 	}
 
 	eventsListeners(): void{
@@ -287,43 +290,54 @@ export default class Vendors{
 	}
 
 	draw(): void{
-
+    let shouldDraw = false;
 		let {tmp, manager, vendors} = this.library;
 		let {particles} = this.params;
+    let thisDraw = performance.now();
+    if( thisDraw - this.lastDraw > 1000 / particles.fps_limit ){
+      shouldDraw = true;
+      this.lastDraw = performance.now();
+    }
 		if( particles.shape.type == 'image' || particles.shape.type == 'images' ){
 			if( tmp.img_type == 'svg' ){
 				if( tmp.count_svg >= particles.number.value ){
-					manager.particlesDraw();
+          if( shouldDraw ){
+            manager.particlesDraw();
+          }
 					if( !particles.move.enable ){
 						cancelAnimationFrame( tmp.drawAnimFrame );
 					}else{
-						tmp.drawAnimFrame = requestAnimationFrame( vendors.draw.bind( vendors ) );
+						tmp.drawAnimFrame = requestAnimationFrame( vendors.draw );
 					}
 				}else{
 					if( !tmp.img_error ){
-						tmp.drawAnimFrame = requestAnimationFrame( vendors.draw.bind( vendors ) );
+						tmp.drawAnimFrame = requestAnimationFrame( vendors.draw );
 					}
 				}
 			}else{
 				if( tmp.img_obj != undefined ){
-					manager.particlesDraw();
+          if( shouldDraw ){
+            manager.particlesDraw();
+          }
 					if( !particles.move.enable ){
 						cancelAnimationFrame( tmp.drawAnimFrame );
 					}else{
-						tmp.drawAnimFrame = requestAnimationFrame( vendors.draw.bind( vendors ) );
+						tmp.drawAnimFrame = requestAnimationFrame( vendors.draw );
 					}
 				}else{
 					if( !tmp.img_error ){
-						tmp.drawAnimFrame = requestAnimationFrame( vendors.draw.bind( vendors ) );
+						tmp.drawAnimFrame = requestAnimationFrame( vendors.draw );
 					}
 				}
 			}
 		}else{
-			manager.particlesDraw();
+      if( shouldDraw ){
+        manager.particlesDraw();
+      }
 			if( !particles.move.enable ){
 				cancelAnimationFrame( tmp.drawAnimFrame );
 			}else{
-				tmp.drawAnimFrame = requestAnimationFrame( vendors.draw.bind( vendors ) );
+				tmp.drawAnimFrame = requestAnimationFrame( vendors.draw );
 			}
 		}
 	}
