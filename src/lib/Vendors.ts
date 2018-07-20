@@ -4,15 +4,15 @@ export default class Vendors{
 
 	params: IParams;
 	library: ParticlesLibrary;
-  lastDraw: number;
+  	lastDraw: number;
 
 	constructor( params: IParams, library: ParticlesLibrary ){
 
 		this.params = params;
 		this.library = library;
-    if( typeof performance !== 'undefined' ){
-      this.lastDraw = performance.now();
-    }
+		if( typeof performance !== 'undefined' ){
+			this.lastDraw = performance.now();
+		}
 		
 		this.onMouseMove = this.onMouseMove.bind( this );
 		this.onMouseLeave = this.onMouseLeave.bind( this );
@@ -115,9 +115,7 @@ export default class Vendors{
 		interactivity.mouse.click_time = new Date().getTime();
 
 		if( interactivity.events.onclick.enable ){
-
 			switch( interactivity.events.onclick.mode ){
-
 				case 'push':
 					if( particles.move.enable ){
 						modes.pushParticles( interactivity.modes.push.particles_nb, interactivity.mouse );
@@ -146,9 +144,7 @@ export default class Vendors{
 						tmp.repulse_clicking = false;
 					}, interactivity.modes.repulse.duration * 1000 );
 					break;
-
 			}
-
 		}
 	}
 
@@ -296,7 +292,7 @@ export default class Vendors{
 	}
 
 	draw(): void{
-    let shouldDraw = true;
+    	let shouldDraw = true;
 		let {tmp, manager, vendors} = this.library;
 		let {particles} = this.params;
 		if( performance !== undefined ){
