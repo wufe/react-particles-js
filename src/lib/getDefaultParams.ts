@@ -3,7 +3,6 @@ import { IParams } from '.';
 export const getDefaultParams: () => IParams =
 	() => ({
 		particles: {
-			fps_limit: 60,
 			number: {
 				value: 40,
 				density: {
@@ -117,5 +116,6 @@ export const getDefaultParams: () => IParams =
 			},
 			mouse: {}
 		},
-		retina_detect: true
+		retina_detect: true,
+		fps_limit: 60
 	});

@@ -299,20 +299,20 @@ export default class Vendors{
     let shouldDraw = true;
 		let {tmp, manager, vendors} = this.library;
 		let {particles} = this.params;
-    if( typeof performance !== 'undefined' ){
-      let thisDraw = performance.now();
-      if( thisDraw - this.lastDraw < 1000 / particles.fps_limit ){
-        shouldDraw = false;
-      } else {
-        this.lastDraw = performance.now();
-      }
-    }
+		if( performance !== undefined ){
+			let thisDraw = performance.now();
+			if( thisDraw - this.lastDraw < 1000 / this.params.fps_limit ){
+				shouldDraw = false;
+			} else {
+				this.lastDraw = performance.now();
+			}
+		}
 		if( particles.shape.type == 'image' || particles.shape.type == 'images' ){
 			if( tmp.img_type == 'svg' ){
 				if( tmp.count_svg >= particles.number.value ){
-          if( shouldDraw ){
-            manager.particlesDraw();
-          }
+          			if( shouldDraw ){
+						manager.particlesDraw();
+          			}
 					if( !particles.move.enable ){
 						cancelAnimationFrame( tmp.drawAnimFrame );
 					}else{
@@ -325,9 +325,9 @@ export default class Vendors{
 				}
 			}else{
 				if( tmp.img_obj != undefined ){
-          if( shouldDraw ){
-            manager.particlesDraw();
-          }
+          			if( shouldDraw ){
+            			manager.particlesDraw();
+          			}
 					if( !particles.move.enable ){
 						cancelAnimationFrame( tmp.drawAnimFrame );
 					}else{
@@ -340,9 +340,9 @@ export default class Vendors{
 				}
 			}
 		}else{
-      if( shouldDraw ){
-        manager.particlesDraw();
-      }
+			if( shouldDraw ){
+				manager.particlesDraw();
+			}
 			if( !particles.move.enable ){
 				cancelAnimationFrame( tmp.drawAnimFrame );
 			}else{

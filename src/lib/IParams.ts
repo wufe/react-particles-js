@@ -44,7 +44,6 @@ export interface IMouseParam{
 
 export interface IParams{
 	particles: {
-    fps_limit: number;
 		number: {
 			value: number;
 			density: {
@@ -168,4 +167,5 @@ export interface IParams{
 		mouse?: IMouseParam;
 	};
 	retina_detect: boolean;
+	fps_limit: number;
 }
