@@ -9,6 +9,7 @@ import {ComponentClass} from 'react';
 
 export type IParticlesParams = {
     particles?: {
+        fps_limit?: number;
         number?: {
             value?: number;
             density?: {

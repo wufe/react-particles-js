@@ -44,6 +44,7 @@ export interface IMouseParam{
 
 export interface IParams{
 	particles: {
+    fps_limit: number;
 		number: {
 			value: number;
 			density: {

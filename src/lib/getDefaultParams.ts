@@ -2,7 +2,8 @@ import {IParams} from '.';
 
 export const getDefaultParams: () => IParams =
 	() => ({
-		particles: {
+    particles: {
+      fps_limit: 60,
 			number: {
 				value: 40,
 				density: {
