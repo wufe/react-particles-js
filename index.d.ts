@@ -9,7 +9,6 @@ import {ComponentClass} from 'react';
 
 export type IParticlesParams = {
     particles?: {
-        fps_limit?: number;
         number?: {
             value?: number;
             density?: {
@@ -120,6 +119,7 @@ export type IParticlesParams = {
         };
     };
     retina_detected?: boolean;
+    fps_limit?: number;
 };
 
 export interface ParticlesProps{
