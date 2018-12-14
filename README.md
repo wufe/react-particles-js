@@ -2,8 +2,8 @@
 
 [![Particles][image]][hyperlink]
 
-  [hyperlink]: https://rpj.bembi.org
-  [image]: https://raw.githubusercontent.com/wufe/react-particles-js/master/img/particles.png (Particles)
+[hyperlink]: https://rpj.bembi.org
+[image]: https://raw.githubusercontent.com/wufe/react-particles-js/master/img/particles.png "Particles"
 
 Implementation in **Typescript** + **React** of [Particles.js](https://github.com/VincentGarreau/particles.js/) by [Vincent Garreau](https://github.com/VincentGarreau).
 
@@ -22,30 +22,25 @@ Checkout the [demo page](https://rpj.bembi.org).
 Example:
 
 ```javascript
-import Particles from 'react-particles-js';
+import Particles from "react-particles-js";
 
-class App extends Component{
-  
-    render(){
-        return (
-            <Particles />
-        );
-    };
-
+class App extends Component {
+  render() {
+    return <Particles />;
+  }
 }
-
 ```
 
 ### Props
 
-| Prop | Type | Definition |
-| --- | --- | --- |
-| width | string | The width of the canvas. |
-| height | string | The height of the canvas. |
-| params | object | The parameters of the particles instance. |
-| style | object | The style of the canvas element. |
-| className | string | The class name of the canvas wrapper. |
-| canvasClassName | string | the class name of the canvas. |
+| Prop            | Type   | Definition                                |
+| --------------- | ------ | ----------------------------------------- |
+| width           | string | The width of the canvas.                  |
+| height          | string | The height of the canvas.                 |
+| params          | object | The parameters of the particles instance. |
+| style           | object | The style of the canvas element.          |
+| className       | string | The class name of the canvas wrapper.     |
+| canvasClassName | string | the class name of the canvas.             |
 
 Find your parameters configuration [here](http://vincentgarreau.com/particles.js/).
 
@@ -61,57 +56,57 @@ Available only since version `v2.4.0` (available with `npm install react-particl
 
 ##### Requirements
 
-+ Only the first path of the svg will be fetched so you may want to join all path in your svg.
-+ The **[SVGPathSeg polyfill](https://github.com/progers/pathseg)** is required.  
-Add it in your index.html:
+- Only the first path of the svg will be fetched so you may want to join all path in your svg.
+- The **[SVGPathSeg polyfill](https://github.com/progers/pathseg)** is required.  
+  Add it in your index.html:
 
 ```html
 <script src="https://cdn.rawgit.com/progers/pathseg/master/pathseg.js"></script>
 ```
 
 ##### Example
+
 ```typescript
-import Particles from 'react-particles-js';
+import Particles from "react-particles-js";
 
-class App extends Component{
-  
-    render(){
-        return (
-            <Particles 
-                params={{
-                    polygon: {
-                        enable: true,
-                        type: 'inside',
-                        move: {
-                            radius: 10
-                        },
-                        url: 'path/to/svg.svg'
-                    }
-                }} />
-        );
-    };
-
+class App extends Component {
+  render() {
+    return (
+      <Particles
+        params={{
+          polygon: {
+            enable: true,
+            type: "inside",
+            move: {
+              radius: 10
+            },
+            url: "path/to/svg.svg"
+          }
+        }}
+      />
+    );
+  }
 }
 ```
 
 ##### Parameters
 
-+ `polygon.enable` (boolean; default false) - Whether the mask must be enabled
-+ `polygon.url` (string) - The url of the svg  
-+ `polygon.type` ('inline' | 'inside' | 'outside'; default 'inline') - The particles should be drawn over, inside or outside the svg path  
-+ `polygon.scale` (number; default 1) - How much the svg must be scaled  
-+ `polygon.move.radius` (number; default 10) - The radius which will be used as particles movement boundary  
-+ `polygon.move.type` ('path' | 'radius'; default 'path') - Whether the particles should be bounded to the polygon path or to a given radius, while moving with `polygon.type = 'outside'` or `polygon.type = 'inside'` 
-+ `polygon.inline.arrangement` ('random-point' | 'per-point' | 'one-per-point' | 'random-length' | 'equidistant'; default 'one-per-point') - Whether the particles disposition with `polygon.type = 'inline'` should be random or following some criteria; `'one-per-point'` overrides the number of the particles drawn.  
-+ `polygon.draw.enable` (boolean; default false) - Whether the shape should be drawn on the canvas  
-+ `polygon.draw.stroke.width` (number; default .5) - Draw stroke  
-+ `polygon.draw.stroke.color` (string; default 'rgba(255, 255, 255, .1)') - Draw stroke color  
+- `polygon.enable` (boolean; default false) - Whether the mask must be enabled
+- `polygon.url` (string) - The url of the svg
+- `polygon.type` ('inline' | 'inside' | 'outside'; default 'inline') - The particles should be drawn over, inside or outside the svg path
+- `polygon.scale` (number; default 1) - How much the svg must be scaled
+- `polygon.move.radius` (number; default 10) - The radius which will be used as particles movement boundary
+- `polygon.move.type` ('path' | 'radius'; default 'path') - Whether the particles should be bounded to the polygon path or to a given radius, while moving with `polygon.type = 'outside'` or `polygon.type = 'inside'`
+- `polygon.inline.arrangement` ('random-point' | 'per-point' | 'one-per-point' | 'random-length' | 'equidistant'; default 'one-per-point') - Whether the particles disposition with `polygon.type = 'inline'` should be random or following some criteria; `'one-per-point'` overrides the number of the particles drawn.
+- `polygon.draw.enable` (boolean; default false) - Whether the shape should be drawn on the canvas
+- `polygon.draw.stroke.width` (number; default .5) - Draw stroke
+- `polygon.draw.stroke.color` (string; default 'rgba(255, 255, 255, .1)') - Draw stroke color
 
 ---
 
 #### Multiple images
 
-Lets you use multiple images as particle shape.  
+Lets you use multiple images as particle shape.
 
 Demo: [Multiple images demo](https://rpj.bembi.org/#images).
 
@@ -120,27 +115,26 @@ Available only since version `v2.4.0` (available with `npm install react-particl
 ##### Example
 
 ```typescript
-import Particles from 'react-particles-js';
+import Particles from "react-particles-js";
 
-class App extends Component{
-  
-    render(){
-        return (
-            <Particles 
-                params={{
-                    particles: {
-                        shape: {
-                            type: 'images',
-                            images: [
-                                {src: 'path/to/first/image.svg', height: 20, width: 20},
-                                {src: 'path/to/second/image.jpg', height: 20, width: 20},
-                            ]
-                        }
-                    }
-                }} />
-        );
-    };
-
+class App extends Component {
+  render() {
+    return (
+      <Particles
+        params={{
+          particles: {
+            shape: {
+              type: "images",
+              images: [
+                { src: "path/to/first/image.svg", height: 20, width: 20 },
+                { src: "path/to/second/image.jpg", height: 20, width: 20 }
+              ]
+            }
+          }
+        }}
+      />
+    );
+  }
 }
 ```
 
@@ -151,32 +145,30 @@ class App extends Component{
 Adds blurred shadow to the lines of the canvas.
 
 ```js
-import Particles from 'react-particles-js';
+import Particles from "react-particles-js";
 
-class App extends Component{
-  
-    render(){
-        return (
-            <Particles 
-              params={{
-            		particles: {
-            			line_linked: {
-            				shadow: {
-            					enable: true,
-            					color: "#3CA9D1",
-            					blur: 5
-            				}
-            			}
-            		}
-            	}}
-              style={{
-                width: '100%',
-                backgroundImage: `url(${logo})` 
-              }}
-            />
-        );
-    };
-
+class App extends Component {
+  render() {
+    return (
+      <Particles
+        params={{
+          particles: {
+            line_linked: {
+              shadow: {
+                enable: true,
+                color: "#3CA9D1",
+                blur: 5
+              }
+            }
+          }
+        }}
+        style={{
+          width: "100%",
+          backgroundImage: `url(${logo})`
+        }}
+      />
+    );
+  }
 }
 ```
 
@@ -184,19 +176,19 @@ class App extends Component{
 
 ### Reporting issues
 
-+ Look for any related issues.  
-+ If you find an issue that seems related, please comment there instead of creating a new one.  
-+ If you find no related issue, create a new one.  
-+ Include all details you can ( operative system, environment, interpreter version, etc.. ).  
-+ Include the error log.  
-+ Remember to check the discussion and update if there changes.  
+- Look for any related issues.
+- If you find an issue that seems related, please comment there instead of creating a new one.
+- If you find no related issue, create a new one.
+- Include all details you can ( operative system, environment, interpreter version, etc.. ).
+- Include the error log.
+- Remember to check the discussion and update if there changes.
 
-### Contributing  
+### Contributing
 
-+ Fork the repository  
-+ Create your feature branch  
-+ Commit your changes and push the branch  
-+ Submit a pull request
+- Fork the repository
+- Create your feature branch
+- Commit your changes and push the branch
+- Submit a pull request
 
 ---
 
@@ -204,11 +196,11 @@ class App extends Component{
 
 ### Refactoring stages
 
-+ Add comprehensive props to the component.  
-+ Change params names.  
-+ Change variable and function names into more readable/understable/maintainable ones.  
-+ Update the structure of the code detaching defined functions from `this.params.fn` object.  
-+ Tests.
+- Add comprehensive props to the component.
+- Change params names.
+- Change variable and function names into more readable/understable/maintainable ones.
+- Update the structure of the code detaching defined functions from `this.params.fn` object.
+- Tests.
 
 ### What's next
 
