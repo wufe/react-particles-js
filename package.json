@@ -1,8 +1,11 @@
 {
   "name": "react-particles-js",
-  "version": "3.0.3",
+  "version": "3.1.0-beta.0",
   "description": "Reactified particles.js",
-  "main": "lib/particles.js",
+  "main": "index.js",
+  "unpkg": "umd/particles.js",
+  "jsdelivr": "umd/particles.js",
+  "browser": "umd/particles.js",
   "types": "index.d.ts",
   "scripts": {
     "compile": "webpack",
