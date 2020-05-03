@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.11",
-    "tsparticles": "^1.13.7"
+    "tsparticles": "^1.13.8"
   },
   "peerDependencies": {
     "react": "^16.0.0"
