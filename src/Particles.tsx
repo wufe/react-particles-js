@@ -7,12 +7,15 @@ import type { RecursivePartial } from "tsparticles/dist/Types/RecursivePartial";
 import { defaultParams } from "./DefaultOptions";
 import { Options } from "tsparticles/dist/Classes/Options/Options";
 import { tsParticles } from "tsparticles";
+import { IPolygonMaskOptions } from "tsparticles/dist/Plugins/PolygonMask/PolygonMaskPlugin";
+import { IAbsorberOptions } from "tsparticles/dist/Plugins/Absorbers/AbsorbersPlugin";
+import { IEmitterOptions } from "tsparticles/dist/Plugins/Emitters/EmittersPlugin";
 
 export interface ParticlesProps {
     id: string;
     width: string;
     height: string;
-    params: RecursivePartial<IOptions>;
+    params: RecursivePartial<IOptions & IPolygonMaskOptions & IAbsorberOptions & IEmitterOptions>;
     style: any;
     className?: string;
     canvasClassName?: string;

@@ -5,28 +5,12 @@
 
 /// <reference types="react" />
 
-export type RecursivePartial<T> = {
-	[P in keyof T]?: T[P] extends (infer U)[]
-	? RecursivePartial<U>[]
-	: T[P] extends object ? RecursivePartial<T[P]> : T[P]
-};
-
 import { ComponentClass } from "react";
-import { IOptions } from "tsparticles/dist/Interfaces/Options/IOptions";
-import { Container } from "tsparticles/dist/Classes/Container";
+import { IOptions } from "tsparticles/dist/Options/Interfaces/IOptions";
+import { Container } from "tsparticles/dist/Core/Container";
+import { RecursivePartial } from "tsparticles/dist/Types/RecursivePartial";
 
-export * from 'tsparticles/dist/Enums/InteractivityDetect';
-export * from 'tsparticles/dist/Enums/MoveDirection';
-export * from 'tsparticles/dist/Enums/OutMode';
-export * from 'tsparticles/dist/Enums/PolygonMaskInlineArrangement';
-export * from 'tsparticles/dist/Enums/PolygonMaskMoveType';
-export * from 'tsparticles/dist/Enums/PolygonMaskType';
-export * from 'tsparticles/dist/Enums/ProcessBubbleType';
-export * from 'tsparticles/dist/Enums/RotateDirection';
-export * from 'tsparticles/dist/Enums/ShapeType';
-export * from 'tsparticles/dist/Enums/Modes/ClickMode';
-export * from 'tsparticles/dist/Enums/Modes/DivMode';
-export * from 'tsparticles/dist/Enums/Modes/HoverMode';
+export * from 'tsparticles/dist/Enums';
 
 export type IParticlesParams = RecursivePartial<IOptions>;
 

@@ -1,16 +1,16 @@
-import type { IOptions } from "tsparticles/dist/Interfaces/Options/IOptions";
-import { ShapeType } from "tsparticles/dist/Enums/ShapeType";
-import type { RecursivePartial } from "tsparticles/dist/Types/RecursivePartial";
-import { PolygonMaskType } from "tsparticles/dist/Enums/PolygonMaskType";
-import { PolygonMaskInlineArrangement } from "tsparticles/dist/Enums/PolygonMaskInlineArrangement";
-import { PolygonMaskMoveType } from "tsparticles/dist/Enums/PolygonMaskMoveType";
-import { HoverMode } from "tsparticles/dist/Enums/Modes/HoverMode";
-import { ClickMode } from "tsparticles/dist/Enums/Modes/ClickMode";
-import { InteractivityDetect } from "tsparticles/dist/Enums/InteractivityDetect";
-import { OutMode } from "tsparticles/dist/Enums/OutMode";
-import { MoveDirection } from "tsparticles/dist/Enums/MoveDirection";
+import { RecursivePartial } from "tsparticles/dist/Types/RecursivePartial";
+import { ClickMode, HoverMode, InteractivityDetect, MoveDirection, OutMode, ShapeType } from "tsparticles/dist/Enums";
+import type { IOptions } from "tsparticles/dist/Options/Interfaces/IOptions";
+import {
+    InlineArrangement as PolygonMaskInlineArrangement,
+    IPolygonMaskOptions,
+    MoveType as PolygonMaskMoveType,
+    Type as PolygonMaskType
+} from "tsparticles/dist/Plugins/PolygonMask/PolygonMaskPlugin";
+import { IAbsorberOptions } from "tsparticles/dist/Plugins/Absorbers/AbsorbersPlugin";
+import { IEmitterOptions } from "tsparticles/dist/Plugins/Emitters/EmittersPlugin";
 
-export const defaultParams: RecursivePartial<IOptions> = {
+export const defaultParams: RecursivePartial<IOptions & IPolygonMaskOptions & IAbsorberOptions & IEmitterOptions> = {
     particles: {
         number: {
             value: 40,
@@ -36,7 +36,7 @@ export const defaultParams: RecursivePartial<IOptions> = {
                 src: "",
                 width: 100,
                 height: 100
-            },
+            }
         },
         opacity: {
             value: 0.5,
@@ -83,7 +83,7 @@ export const defaultParams: RecursivePartial<IOptions> = {
                 rotateX: 3000,
                 rotateY: 3000
             }
-        },
+        }
     },
     interactivity: {
         detectsOn: InteractivityDetect.canvas,
