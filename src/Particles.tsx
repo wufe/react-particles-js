@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Component } from "react";
 import isEqual from "lodash/isEqual";
-import type { IOptions } from "tsparticles/dist/Interfaces/Options/IOptions";
+import type { IOptions } from "tsparticles/dist/Options/Interfaces/IOptions";
 import { Container } from "tsparticles/dist/Classes/Container";
 import type { RecursivePartial } from "tsparticles/dist/Types/RecursivePartial";
 import { defaultParams } from "./DefaultOptions";
