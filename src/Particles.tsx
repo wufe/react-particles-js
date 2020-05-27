@@ -52,12 +52,13 @@ export default class Particles extends Component<ParticlesProps,
         } catch {
             return null;
         } // SSR
+
+        tsParticles.init();
+
         const options = new Options();
 
         options.load(defaultParams);
         options.load(params);
-
-        tsParticles.init();
 
         const container = new Container(tagId, options);
 
