@@ -2,14 +2,14 @@ import * as React from "react";
 import { Component } from "react";
 import isEqual from "lodash/isEqual";
 import type { IOptions } from "tsparticles/dist/Options/Interfaces/IOptions";
-import { Container } from "tsparticles/dist/Classes/Container";
+import { Container } from "tsparticles/dist/Core/Container";
 import type { RecursivePartial } from "tsparticles/dist/Types/RecursivePartial";
 import { defaultParams } from "./DefaultOptions";
-import { Options } from "tsparticles/dist/Classes/Options/Options";
 import { tsParticles } from "tsparticles";
 import { IPolygonMaskOptions } from "tsparticles/dist/Plugins/PolygonMask/PolygonMaskPlugin";
 import { IAbsorberOptions } from "tsparticles/dist/Plugins/Absorbers/AbsorbersPlugin";
 import { IEmitterOptions } from "tsparticles/dist/Plugins/Emitters/EmittersPlugin";
+import { Utils } from "tsparticles/dist/Utils";
 
 export interface ParticlesProps {
     id: string;
@@ -55,11 +55,7 @@ export default class Particles extends Component<ParticlesProps,
 
         tsParticles.init();
 
-        const options = new Options();
-
-        options.load(defaultParams);
-        options.load(params);
-
+        const options = Utils.deepExtend({}, defaultParams, params);
         const container = new Container(tagId, options);
 
         if (this.props.particlesRef) {
