@@ -17,7 +17,7 @@ export const defaultParams: RecursivePartial<IOptions & IPolygonMaskOptions & IA
             max: -1,
             density: {
                 enable: false,
-                value_area: 1200
+                area: 1200
             }
         },
         color: {
@@ -25,12 +25,8 @@ export const defaultParams: RecursivePartial<IOptions & IPolygonMaskOptions & IA
         },
         shape: {
             type: ShapeType.circle,
-            stroke: {
-                width: 0,
-                color: "#000000"
-            },
             polygon: {
-                nb_sides: 5
+                sides: 5
             },
             image: {
                 src: "",
@@ -38,13 +34,17 @@ export const defaultParams: RecursivePartial<IOptions & IPolygonMaskOptions & IA
                 height: 100
             }
         },
+        stroke: {
+            width: 0,
+            color: "#000000"
+        },
         opacity: {
             value: 0.5,
             random: false,
             anim: {
                 enable: true,
                 speed: 1,
-                opacity_min: 0.1,
+                minimumValue: 0.1,
                 sync: false
             }
         },
@@ -54,11 +54,11 @@ export const defaultParams: RecursivePartial<IOptions & IPolygonMaskOptions & IA
             anim: {
                 enable: false,
                 speed: 40,
-                size_min: 0,
+                minimumValue: 0,
                 sync: false
             }
         },
-        line_linked: {
+        links: {
             enable: true,
             distance: 150,
             color: "#FFF",
@@ -76,7 +76,7 @@ export const defaultParams: RecursivePartial<IOptions & IPolygonMaskOptions & IA
             direction: MoveDirection.none,
             random: false,
             straight: false,
-            out_mode: OutMode.bounce,
+            outMode: OutMode.bounce,
             bounce: true,
             attract: {
                 enable: false,
@@ -101,7 +101,7 @@ export const defaultParams: RecursivePartial<IOptions & IPolygonMaskOptions & IA
         modes: {
             grab: {
                 distance: 180,
-                line_linked: {
+                links: {
                     opacity: 0.35
                 }
             },
@@ -115,15 +115,15 @@ export const defaultParams: RecursivePartial<IOptions & IPolygonMaskOptions & IA
                 duration: 5
             },
             push: {
-                particles_nb: 4
+                quantity: 4
             },
             remove: {
-                particles_nb: 2
+                quantity: 2
             }
         }
     },
-    retina_detect: true,
-    fps_limit: 999,
+    detectRetina: true,
+    fpsLimit: 999,
     polygon: {
         enable: false,
         scale: 1,

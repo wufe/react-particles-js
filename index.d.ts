@@ -4,24 +4,22 @@
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
 /// <reference types="react" />
-
 import { ComponentClass } from "react";
-import { IOptions } from "tsparticles/dist/Options/Interfaces/IOptions";
 import { Container } from "tsparticles/dist/Core/Container";
-import { RecursivePartial } from "tsparticles/dist/Types/RecursivePartial";
+import { IParticlesParams } from "./src/Particles";
+
+export { IParticlesParams };
 
 export * from 'tsparticles/dist/Enums';
 
-export type IParticlesParams = RecursivePartial<IOptions>;
-
 export interface ParticlesProps {
-	width?: string;
-	height?: string;
-	params?: IParticlesParams;
-	style?: any;
-	className?: string;
-	canvasClassName?: string;
-	particlesRef?: React.RefObject<Container>;
+    width?: string;
+    height?: string;
+    params?: IParticlesParams;
+    style?: any;
+    className?: string;
+    canvasClassName?: string;
+    particlesRef?: React.RefObject<Container>;
 }
 
 type Particles = ComponentClass<ParticlesProps>;
