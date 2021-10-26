@@ -2,6 +2,9 @@ import { ClickMode, HoverMode, InteractivityDetect, MoveDirection, OutMode, Shap
 import { InlineArrangement as PolygonMaskInlineArrangement, Type as PolygonMaskType } from 'tsparticles/Plugins/PolygonMask/Enums';
 
 export const defaultParams: ISourceOptions = {
+    fullScreen: {
+        enable: false
+    },
     particles: {
         number: {
             value: 40,
