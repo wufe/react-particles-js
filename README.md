@@ -1,5 +1,14 @@
 ## Particles.js - React Component
 
+---
+
+## Warning: deprecation notice
+
+Since this library is not actively maintained, it has been deprecated in favor of [react-tsparticles](https://www.npmjs.com/package/react-tsparticles) which shares the same core functionality of this library.  
+
+---
+
+
 [![Particles][image]][hyperlink]
 
   [hyperlink]: https://rpj.bembi.dev
